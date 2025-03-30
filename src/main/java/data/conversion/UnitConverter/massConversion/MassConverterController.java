@@ -18,9 +18,7 @@ public class MassConverterController {
 
     @PostMapping("/convert")
     public ResponseEntity<ConversionOutput> getConvertedMass(@RequestBody ConversionInput conversionInput){
-        System.err.println("Conversion input is : " + conversionInput.toString());
         ConversionOutput conversionOutput = massConverterService.startConversion(conversionInput);
-        System.err.println("Conversion output is : " +conversionOutput.toString());
         return new ResponseEntity<ConversionOutput>(conversionOutput, HttpStatus.OK);
     }
 
