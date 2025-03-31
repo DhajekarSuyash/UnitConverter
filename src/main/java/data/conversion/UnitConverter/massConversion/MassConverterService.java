@@ -5,14 +5,14 @@ import data.conversion.UnitConverter.constants.ConversionUnits;
 import data.conversion.UnitConverter.dto.ConversionInput;
 import data.conversion.UnitConverter.dto.ConversionOutput;
 import data.conversion.UnitConverter.massConversion.entity.MassConversion;
-import data.conversion.UnitConverter.operations.MultiplicationFactor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MassConverterService {
 
-
+    private final Logger LOG = LoggerFactory.getLogger(MassConverterService.class);
     private final MassConverterExecutor executor;
 
     private final MassConverterRepository repository;
@@ -26,11 +26,10 @@ public class MassConverterService {
         String inputUnit = conversionInput.getInputUnit().toString();
         String reqOutputUnit = conversionInput.getRequiredOutputUnit().toString();
         String command = createMassConversionCommand(inputUnit, reqOutputUnit);
+        LOG.info("Conversion command executed : " +command);
         double outputValue = executor.massConverter(conversionInput.getInputValue(), command);
-
-        // Store to database
         storeConversionInDb(conversionInput, outputValue);
-
+        LOG.info("Conversion stored to database ");
         return createConversionOutput(conversionInput.getUserName(), conversionInput.getType(), outputValue, conversionInput.getRequiredOutputUnit());
     }
 
@@ -51,7 +50,7 @@ public class MassConverterService {
         try {
             repository.save(massConversion);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Exception in storing conversion to database "+e);
         }
 
 
